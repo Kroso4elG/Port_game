@@ -49,6 +49,10 @@ HEIGHT = int(WIDTH * display_height / display_width)
 # Поверхность, на которой работает сама игра
 screen = pygame.Surface((WIDTH, HEIGHT))
 
+# Коэффициенты перевода координат касания
+scale_x = WIDTH / display_width
+scale_y = HEIGHT / display_height
+
 pygame.display.set_caption("Port Game 0.0.1")
 
 clock = pygame.time.Clock()
@@ -60,6 +64,12 @@ clock = pygame.time.Clock()
 ship_exists = False
 ship = Ship()
 
+# -------------------------
+# НАСТРОЙКИ ВВОДА
+# -------------------------
+
+touch_x = 0
+touch_y = 0
 
 # -------------------------
 # ИГРОВОЙ ЦИКЛ
@@ -74,7 +84,15 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+        # -------------------------
+        # ОБРАБОТКА ВВОДА
+        # -------------------------
+
         if event.type == pygame.MOUSEBUTTONDOWN:
+
+            # Перевод координат телефона в координаты игры
+            touch_x = int(event.pos[0] * scale_x)
+            touch_y = int(event.pos[1] * scale_y)
             
             if not ship_exists:
                 ship = Ship()
@@ -149,6 +167,17 @@ while running:
             (255, 255, 255)
      )
         screen.blit(text, (300, 240))
+
+    # -------------------------
+    # ОТЛАДКА КООРДИНАТ
+    # -------------------------
+
+    text = font.render(
+        "Касание: " + str(touch_x) + ", " + str(touch_y),
+        True,
+        (255, 255, 255)
+    )
+    screen.blit(text, (20, 20))
         
 # Масштабируем игровую поверхность на настоящий экран
     scaled_screen = pygame.transform.scale(
