@@ -30,11 +30,26 @@ pygame.init()
 
 font = pygame.font.Font(None, 30)
 
-WIDTH = 900
-HEIGHT = 600
+# -------------------------
+# НАСТРОЙКИ ЭКРАНА
+# -------------------------
 
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Port Game 0.1")
+# Реальный экран телефона
+display = pygame.display.set_mode(
+    (0, 0),
+    pygame.FULLSCREEN
+)
+
+display_width, display_height = display.get_size()
+
+# Логическое разрешение игры
+WIDTH = 600
+HEIGHT = int(WIDTH * display_height / display_width)
+
+# Поверхность, на которой работает сама игра
+screen = pygame.Surface((WIDTH, HEIGHT))
+
+pygame.display.set_caption("Port Game 0.0.1")
 
 clock = pygame.time.Clock()
 
@@ -69,10 +84,10 @@ while running:
                 ship.unload()
                 
                 if ship.state == "finished":
-                    ship_exists = False
+                    ship_exists = False                
                 
         
-    # -------------------------
+        # -------------------------
     # КАРТА
     # -------------------------
 
@@ -115,17 +130,16 @@ while running:
 
 
     # -------------------------
-    # ГЛАВНЫЙ ЦИКЛ, ОТРИСОВКА СУДНА
+    #ГЛАВНЫЙ ЦИКЛ, ОТРИСОВКА СУДНА
     # -------------------------
 
     if ship_exists:
         ship.draw(screen)
         
         text = font.render(
-            "Контейнеры: " + str(ship.containers),
-            True,
-            (255, 255, 255)
-        )
+        "Контейнеры: " + str(ship.containers),        True,
+        (255, 255, 255)
+    )
         screen.blit(text, (300, 210))
         
     if ship.state == "finished":
@@ -133,9 +147,17 @@ while running:
             "Разгрузка завершена!",
             True,
             (255, 255, 255)
-        )
+     )
         screen.blit(text, (300, 240))
         
+# Масштабируем игровую поверхность на настоящий экран
+    scaled_screen = pygame.transform.scale(
+        screen,
+        (display_width, display_height)
+)
+
+    display.blit(scaled_screen, (0, 0))
+
     pygame.display.flip()
 
     clock.tick(60)
